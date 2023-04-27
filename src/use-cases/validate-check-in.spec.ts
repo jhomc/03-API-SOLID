@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { ValidateCheckInUseCase } from './validate-check-in'
 import { LateCheckInValidationError } from './errors/late-check-in-validation-error'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let sut: ValidateCheckInUseCase
@@ -32,7 +33,13 @@ describe('Validate Check-in Use Case', () => {
     expect(checkInsRepository.items[0].validated_at).toEqual(expect.any(Date))
   })
 
-  it.skip('should not be able to validate inexistent checkin', async () => {})
+  it('should not be able to validate inexistent checkin', async () => {
+    await expect(() =>
+      sut.execute({
+        checkInId: 'inexistent-check-in-id',
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
 
   it('should not be able to validate the check-in after 20 minutes of its creation', async () => {
     vi.setSystemTime(new Date(2023, 0, 1, 13, 40))
