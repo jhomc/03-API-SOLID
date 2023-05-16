@@ -3,7 +3,7 @@ import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-describe('Authenticate e2e', () => {
+describe('Create Gym e2e', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -11,19 +11,20 @@ describe('Authenticate e2e', () => {
   afterAll(async () => {
     await app.close()
   })
-  it('should be able to authenticate', async () => {
+  it('should be able to create gym', async () => {
     const { token } = await createAndAuthenticateUser(app)
 
-    const profileResponse = await request(app.server)
-      .get('/me')
+    const response = await request(app.server)
+      .post('/gyms')
       .set('Authorization', `Bearer ${token}`)
-      .send()
+      .send({
+        title: 'Javascript Gym',
+        description: 'lorem ipsum',
+        phone: '4199999999',
+        latitude: -25.5026118,
+        longitude: -49.4097469,
+      })
 
-    expect(profileResponse.statusCode).toEqual(200)
-    expect(profileResponse.body.user).toEqual(
-      expect.objectContaining({
-        email: 'john.doe@gmail.com',
-      }),
-    )
+    expect(response.statusCode).toEqual(201)
   })
 })
