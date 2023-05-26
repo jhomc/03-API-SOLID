@@ -16,7 +16,7 @@ describe('Refresh e2e', () => {
       email: 'john.doe@gmail.com',
       password: '123456',
     })
-    const authResponse = await request(app.server).post('/session').send({
+    const authResponse = await request(app.server).post('/sessions').send({
       email: 'john.doe@gmail.com',
       password: '123456',
     })
